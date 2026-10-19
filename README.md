@@ -37,7 +37,7 @@ Cada módulo está etiquetado con su nivel real de madurez. "Compila" NO signifi
 | 🧫 INTEGRATION-TESTED | Pruebas entre componentes en CI (race, clippy, build matrix) | pipeline `.github/workflows/ci.yml` |
 | 🏗️ LAB-VALIDATED | Probado en laboratorio controlado (lab local) | GUI↔servidor↔agente (smoke test manual), stager end-to-end |
 | 📋 DOCUMENTED | Guías de despliegue/operación y threat model | COMMERCIAL_DEPLOYMENT_GUIDE.md, THREAT_MODEL.md |
-| ✅ PRODUCTION-READY | Hardened + testado + auditado + documentado | **ninguno aún** — ver roadmap Fase 18 |
+| ✅ PRODUCTION-READY | Hardened + testado + auditado + documentado | **ninguno aún** - ver roadmap Fase 18 |
 
 > **Regla de oro:** un módulo solo puede marcarse ✅ cuando pasa por TODOS los estados anteriores y el `THREAT_MODEL.md` lo cubre. Hoy el servidor Go es el único componente entre `🧪 UNIT-TESTED` y `🏗️ LAB-VALIDATED`.
 
@@ -217,10 +217,10 @@ golang.org/x/crypto               # bcrypt password hashing
 **Puerto por defecto:** 9090 (8080 puede estar ocupado por HTTP.sys de Windows)
 
 **Endpoints:**
-- `GET /` — Viewer HTML con auto-refresh cada 500ms
-- `GET /screen` — Screenshot JPEG actual
-- `GET /mouse?action=<type>&x=<x>&y=<y>` — Control de mouse
-- `POST /keyboard` — Enviar teclas (JSON: `{"text":"..."}`)
+- `GET /` - Viewer HTML con auto-refresh cada 500ms
+- `GET /screen` - Screenshot JPEG actual
+- `GET /mouse?action=<type>&x=<x>&y=<y>` - Control de mouse
+- `POST /keyboard` - Enviar teclas (JSON: `{"text":"..."}`)
 
 **Flujo:**
 1. Operador ejecuta `desktop 9090`
@@ -944,7 +944,7 @@ modules/lateral-rust/
 > **ADVERTENCIA**: vectores de entrega y evasión para Red Team autorizado / lab.
 > No ejecutar fuera de entorno de pruebas con excepciones de Defender aplicadas.
 
-**Ubicación:** `delivery/` — kit independiente (Python + Go) para la fase de acceso
+**Ubicación:** `delivery/` - kit independiente (Python + Go) para la fase de acceso
 inicial: prepara la "foto" que se envía (WhatsApp/SMS/email), sirve el landing, entrega
 el payload cifrado y mide el funnel de la campaña en tiempo real.
 
@@ -965,7 +965,7 @@ almacenamiento propio).
 | Técnica | Cómo la implementa el kit |
 |---------|---------------------------|
 | **T1566 / T1189** (phishing / drive-by) | Landing "photo viewer" y "fake system update", envío de la foto por chat |
-| **T1204.002** (ejecución por usuario) | Poliglota APK/JPEG, merge JPEG+EXE, HTA, LNK — siempre hay un 1-click |
+| **T1204.002** (ejecución por usuario) | Poliglota APK/JPEG, merge JPEG+EXE, HTA, LNK - siempre hay un 1-click |
 | **T1105** (ingress tool transfer) | `/payload` y `/d/<token>` sirven el stage/agente al dispositivo |
 | **T1140** (deobfuscación) | XOR-SHA256 en stage.py, LSB stego en memoria, decodificación en el stager |
 | **T1027.003** (datos ofuscados) | Payload nunca viaja en claro: ni en el APK de entrega ni en el EXE |
@@ -1021,8 +1021,8 @@ Componente por componente, la conexión es:
 
 | Endpoint | Respuesta | Evento de telemetría | Uso |
 |----------|-----------|----------------------|-----|
-| `/dash`, `/dashboard`, `/` | 200 HTML dashboard | — | Panel del operador (en `DASH_HTML`) |
-| `/metrics`, `/api/metrics` | 200 JSON | — | Funnel completo para GUI/CLI |
+| `/dash`, `/dashboard`, `/` | 200 HTML dashboard | - | Panel del operador (en `DASH_HTML`) |
+| `/metrics`, `/api/metrics` | 200 JSON | - | Funnel completo para GUI/CLI |
 | `/index.html`, `/update.html`, `/landing` | 200 HTML landing | `visit` | Página "photo viewer" / "fake update" |
 | `/<foto>.jpg` | 200 imagen | `view` | La "foto" que ve la víctima |
 | `/<foto>.jpg.apk` | 200 APK | `download` | Poliglota Android |
@@ -1050,9 +1050,9 @@ install→beacon) y el dashboard `/dash` lo pinta en HTML.
 ### Stage del payload (pattern MiningDropper/Zombinder)
 
 `stage.py` extrae el `.dex` más grande del APK (o `--dex` directo) y produce:
-- `out/payload.bin` — DEX cifrado con XOR keystream `SHA-256(key || counter LE)`
-- `out/payload.sha256` — hash del blob para verificación
-- `out/stage.json` — manifiesto:
+- `out/payload.bin` - DEX cifrado con XOR keystream `SHA-256(key || counter LE)`
+- `out/payload.sha256` - hash del blob para verificación
+- `out/stage.json` - manifiesto:
 ```json
 {"cipher": "xor-sha256", "key_ref": "Config.STAGE_KEY", "size": 12345,
  "raw_size": 54321, "sha256": "...", "urls": {
@@ -1061,7 +1061,7 @@ install→beacon) y el dashboard `/dash` lo pinta en HTML.
 ```
 
 Idea: el APK entregado solo lleva un loader mínimo; **el agente completo nunca viaja en
-la entrega** — se descarga post-install. La key se guarda en `delivery.conf.json`.
+la entrega** - se descarga post-install. La key se guarda en `delivery.conf.json`.
 
 ### Tokens single-use
 
@@ -1079,12 +1079,12 @@ hex-128-bits en `out/tokens.json`:
 Al usar el token se marca `"used": true` y se persiste de inmediato (single-use real,
 no solo en memoria).
 
-### Stager Go (Windows) — `evasion/stager.go`
+### Stager Go (Windows) - `evasion/stager.go`
 
 Compilado por `stager_build.py` con `go build -trimpath -ldflags "-s -w -H windowsgui"`
 (CGO_ENABLED=0, ventana sin consola, versiones de Go 1.24+). Flujo de ejecución:
 
-1. **Anti-sandbox (T1497)** — si alguna falla, `os.Exit(0)` silencioso:
+1. **Anti-sandbox (T1497)** - si alguna falla, `os.Exit(0)` silencioso:
    - RAM total < 2 GB → exit
    - CPUs < 2 → exit
    - Uptime < 10 minutos → exit
@@ -1104,12 +1104,12 @@ binario distinto por build (verificado: hashes distintos por build). Parámetros
 `--url` (obligatorio, ej: `http://IP:8899/d/<token>`), `--key` (si vacío → el de
 `delivery.conf.json` o autogenerado), `--stego` (payload embebido en PNG), `--out`.
 
-### Stego LSB PNG — `evasion/stego.py`
+### Stego LSB PNG - `evasion/stego.py`
 
 Formato (patrón Caminho): los 32 primeros bits de los pixeles (LSB de cada byte RGB)
 codifican la **longitud big-endian**; después el payload bit a bit (15 bytes por pixel).
 `--key` cifra previamente con XOR-SHA256. Roundtrip verificado. El stager con `--stego`
-hace la extracción en memoria — el payload nunca toca disco.
+hace la extracción en memoria - el payload nunca toca disco.
 
 ### Vectores de entrega
 
@@ -1184,7 +1184,7 @@ Excepciones necesarias:
 | Ruta / binario | Motivo |
 |----------------|--------|
 | Carpeta `C2-DECT` (proyecto) | Stagers, poliglotas y payloads en `delivery/out/` |
-| `powershell.exe` — ASR regla scripts ofuscados (GUID `b9e5e46c-7c35-4a3a-b4a3-5bebad1bbcb4`) | El LNK lanza PowerShell ofuscado |
+| `powershell.exe` - ASR regla scripts ofuscados (GUID `b9e5e46c-7c35-4a3a-b4a3-5bebad1bbcb4`) | El LNK lanza PowerShell ofuscado |
 | `python.exe` (Python 3.12) | El kit y la GUI lanzan scripts |
 | `taskkill.exe` | `stop` mata el PID del servidor |
 | `%TEMP%\svc-host.exe` | Salida del HTA |
@@ -1211,7 +1211,7 @@ Excepciones necesarias:
 > **ADVERTENCIA**: auditoría y búsqueda de CVEs para Red Team autorizado / lab.
 > Genera reportes del dispositivo donde se ejecuta (nunca remoto).
 
-**Ubicación:** `reconocimiento-c2/` — kit independiente (Python puro, sin dependencias
+**Ubicación:** `reconocimiento-c2/` - kit independiente (Python puro, sin dependencias
 externas: stdlib + `tkinter` para la GUI). Ejecuta **en el dispositivo objetivo** y
 produce un reporte JSON + HTML con puntuación de riesgo por categoría.
 

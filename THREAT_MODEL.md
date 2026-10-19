@@ -11,7 +11,7 @@ cualquier revisión de seguridad o auditoría.
 | A1 | Credenciales de operador | Alta | Alta | Alta | Hasheadas (bcrypt/scrypt), SetupWizard fuerza min 12 chars |
 | A2 | JWT signing secret | Alta | Alta | Alta | Generado aleatorio (256-bit) en primer arranque, `c2-dect.conf` permisos 0600 |
 | A3 | Registro de agentes / claves de sesión | Alta | Alta | Media | Intercambio de claves ECDH + AES-GCM por sesión |
-| A4 | Base de tareas (SQLite) | Alta | Alta | Media | `c2-dect.db` — contiene loot, tareas, telemetría |
+| A4 | Base de tareas (SQLite) | Alta | Alta | Media | `c2-dect.db` - contiene loot, tareas, telemetría |
 | A5 | Workstation del operador | Alta | Alta | Media | GUI WPF + token JWT en memoria |
 | A6 | Delivery tokens | Alta | Alta | Media | Tokens de campaña (funnel) |
 | A7 | Telemetría / actividad | Media | Alta | Media | Logs de actividad y check-ins |
@@ -29,7 +29,7 @@ cualquier revisión de seguridad o auditoría.
 | ADV-3 | Operador malicioso / interno | Sabotaje, exfiltración | Credenciales legítimas | Exfiltración de loot, destrucción de datos |
 | ADV-4 | Atacante contra el servidor | RCE, DoS | Vulnerabilidades HTTP/API/WebSocket | Compromiso total del servidor |
 | ADV-5 | Atacante contra la GUI/operador | Phishing, malware de operador | Workstation del operador | Robo de JWT, control indirecto |
-| ADV-6 | Fuga accidental de artefactos | — | Commits, backups, delivery mal configurado | Pérdida de OpSec, implicaciones legales |
+| ADV-6 | Fuga accidental de artefactos | - | Commits, backups, delivery mal configurado | Pérdida de OpSec, implicaciones legales |
 
 ## 3. Trust boundaries
 
@@ -60,11 +60,11 @@ cualquier revisión de seguridad o auditoría.
 ```
 
 Fronteras críticas:
-- **F1 — GUI → C2**: validada por JWT (firmado HS256, pin de algoritmo, issuer `c2-dect`, expiración). CORS restringido a orígenes configurados (`C2_ALLOWED_ORIGIN`).
-- **F2 — C2 → DB**: sola, sin autenticación adicional (protección por permisos del sistema de archivos; recomendado cifrado de disco).
-- **F3 — C2 → Agents**: autenticación por sesión (clave compartida ECDH), payloads cifrados AES-GCM.
-- **F4 — C2 → Delivery**: servidor HTTP separado; sólo sirve artefactos estáticos y staging.
-- **F5 — C2 → IA**: contexto limitado y opcional; tratar la salida del LLM como no confiable (no ejecutar jamás directamente).
+- **F1 - GUI → C2**: validada por JWT (firmado HS256, pin de algoritmo, issuer `c2-dect`, expiración). CORS restringido a orígenes configurados (`C2_ALLOWED_ORIGIN`).
+- **F2 - C2 → DB**: sola, sin autenticación adicional (protección por permisos del sistema de archivos; recomendado cifrado de disco).
+- **F3 - C2 → Agents**: autenticación por sesión (clave compartida ECDH), payloads cifrados AES-GCM.
+- **F4 - C2 → Delivery**: servidor HTTP separado; sólo sirve artefactos estáticos y staging.
+- **F5 - C2 → IA**: contexto limitado y opcional; tratar la salida del LLM como no confiable (no ejecutar jamás directamente).
 
 ## 4. Mitigaciones implementadas
 

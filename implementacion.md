@@ -1,4 +1,4 @@
- IMPLEMENTACION.md — C2-DECT
+ IMPLEMENTACION.md - C2-DECT
 De Framework de Red Team a Arsenál Autónomo de Próxima Generación
 Versión del Documento: 2.0 (Post-análisis estratégico)
 Estado: Implementación Base (Fases 1-16) + Plan de Evolución (Fases 17-21)
