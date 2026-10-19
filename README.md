@@ -1,6 +1,38 @@
-# C2-DECT - Framework de Command & Control
+# C2-DECT - Plataforma de Simulación de Adversarios
+
+> **Plataforma de simulación de adversarios de extremo a extremo: desde el acceso inicial hasta la explotación y el beaconing.** El "C2" del nombre histórico es el **transporte de telemetría** de la simulación, no el producto: lo que se reproduce es la cadena de ataque completa, para medir si el equipo azul la detecta, la contiene y responde.
 
 > **ADVERTENCIA**: Uso exclusivo para testing de seguridad autorizado y operaciones de Red Team.
+
+## Qué es
+
+C2-DECT reproduce, en un laboratorio controlado y con alcance declarado, la cadena de
+ataque que un adversario ejecutaría contra un objetivo autorizado. El objetivo del
+producto es la **medición**: que el equipo azul pueda ver la misma secuencia de
+técnicas, tráfico y artefactos que vería en un ataque real, y medir sobre ella su
+detección, su contención y su tiempo de respuesta.
+
+| Etapa de la cadena | Módulo | Qué simula y qué mide |
+|---|---|---|
+| **Acceso inicial** | Delivery Kit (`delivery/`) | Entrega 1-click (APK/JPEG políglota, HTA/LNK, stager, esteganografía) contra un objetivo de laboratorio. Mide si el canal de entrega es detectable. |
+| **Reconocimiento** | `cmd/recon-module/` | OSINT, escaneo activo y correlación de CVE. Alimenta el Exploit Lab con objetivos priorizados y genera un dossier con puntuación de riesgo. |
+| **Explotación** | Exploit Lab (`exploits/`) | Weaponización, fuzzing (AFL), validación en lab y correlación MITRE. Los gates impiden declarar un RCE sin log de laboratorio. |
+| **Post-explotación** | Agente Go (`cmd/agent_go/`) | Capacidades de archivos, procesos, captura, persistencia y movimiento lateral, cada una etiquetada con su madurez real. |
+| **Escalada y lateral** | `modules/privesc-auto/`, `modules/lateral-rust/`, `modules/ransomware-sim/` | Simulación con presupuestos, topes y regla de dos personas; `ransomware-sim` es un simulador, no un motor de impacto. |
+| **Beaconing** | Servidor Go (`server/`) | Canal de telemetría de la simulación: check-in, jitter, kill-date, mTLS y cifrado en reposo. Sirve para reconstruir la línea de tiempo de la simulación y para que el blue team vea el tráfico exacto que generaría un ataque real. |
+| **Orquestación** | `orchestration/full_chain.py` | Encadena las 6 fases (Acceso → Recon → Explotación → Escalada → Lateral → Impacto) con `dry_run=True` por defecto y emite el resumen del ejercicio. |
+
+**Qué NO es:**
+- **No** es un C2 de propósito general ni una infraestructura de ataque persistente: el
+  beaconing existe para que la simulación sea observable, medible y auditable.
+- **No** hay ningún módulo `PRODUCTION-READY` (ver [`ROADMAP.md`](ROADMAP.md) y la
+  tabla de madurez más abajo). Lo que el código marca como `STUB`, `CHECK-ONLY`,
+  `SIMULADO` o `dry-run` aparece aquí como tal.
+- **No** se opera contra activos de terceros sin autorización escrita vigente.
+
+**Quién lo usa:** equipos rojos, para ensayar la cadena completa; equipos azules,
+para validar sus detecciones contra esa misma cadena. Siempre en un laboratorio
+acotado y con alcance declarado.
 
 ## Estado del Proyecto
 
